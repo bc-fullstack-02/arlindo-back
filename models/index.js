@@ -1,9 +1,12 @@
 const mongoose = require('mongoose')
-const connect = mongoose.connect(
-    `${(process.env.MONGODB || 'mongodb://localhost:27017/mydb')}_${process.env.NODE_ENV || 'development'}`,
+const varmongo = `${(process.env.MONGODB || 'mongodb://localhost:27017/mydb')}_${process.env.NODE_ENV || 'development'}`;
+console.log(varmongo)
+const connect = mongoose.connect(varmongo,
     // https://mongoosejs.com/docs/connections.html#options
     {
-      serverSelectionTimeoutMS: (!process.env.NODE_ENV) ? 1000 : 30000
+      // serverSelectionTimeoutMS: (!process.env.NODE_ENV) ? 1000 : 30000 configuracao do time out abaixo
+      serverSelectionTimeoutMS: (!process.env.NODE_ENV) ? 10000 : 30000
+
     } // Keep trying to send operations for 5 seconds
 )
 exports.Post = require('./post.js')

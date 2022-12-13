@@ -10,10 +10,8 @@ const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const helmet = require('helmet')
-const { User } = require('./models')
 
-
-// const UserModel = require('./models/user')
+const UserModel = require('./models/user')
 
 const ACCESS_TOKEN_SECRET = 'aaaaasd'
 
@@ -79,19 +77,20 @@ app.use(function (req, res, next) {
 app.use(logger(process.env.NODE_ENV || 'dev'))
 
 // add all routes on a prefix version
+const swaggerFile = require('./swagger-output.json')
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 
 app.use((req, res, next) => Connection
   .then(() => next())
   .catch(err => next(err))
 )
-
-
-const swaggerFile = require('./swagger-output.json')
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+app.use(cors())
 
 // app.get('/', (req, res) => res.redirect('/v1/posts')) // redirect home
 app.use('/v1', routersPublic)
-app.use('/v1', authenticateToken, routers)
+
+app.use('/v1', [authenticateToken], routers)
 
 // catch all 404 since no middleware responded
 app.use(function (req, res, next) {
@@ -121,23 +120,16 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500).render('5xx', { err })
   }
 })
-app.use(cors)
+
 app.use(helmet)
-
-
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization
   const token = authHeader && authHeader.split(' ')[1]
-  
   if (token == null) return next(createError(401))
 
   jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-    console.log(user)
-
-    if (err) return next(createError(403))
-   
-    User.findOne({user})
+    UserModel.findOne({user})
     .then(u => {
       req.user = u
       next()

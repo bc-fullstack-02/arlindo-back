@@ -7,12 +7,17 @@ exports.list = (req, res, next) => Promise.resolve()
   .catch(err => next(err))
 
 exports.add = (req, res, next) => Promise.resolve()
-  .then(() => new Post(req.body.post).save())
+  .then(() => {
+    new Post(req.body).save()
+  })
   .then((data) => {
     res.message('add post success!')
-    res.redirect(`/v1/posts/${data._id}`)
+    //res.redirect(`/v1/posts/${data._id}`)
+    res.redirect(`/v1/posts`)
   })
-  .catch(err => next(err))
+  .catch(err => {
+    console.log(err)
+    next(err)})
 
 exports.show = (req, res, next) => Promise.resolve()
   .then(() => Post.findById(req.params.id).populate({

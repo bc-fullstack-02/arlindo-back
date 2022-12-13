@@ -26,9 +26,29 @@
   "paths": {
     "/v1/login": {
       "post": {
-        "description": "",
-        "parameters": [],
-        "responses": {}
+        "description": "Rota de login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/v1/users": {
@@ -36,11 +56,11 @@
         "description": "Rota de criacao de usuario",
         "parameters": [
           {
-            "name": "obj",
+            "name": "usuario",
             "in": "body",
             "schema": {
               "required": [
-                "user, password"
+                "name, password, user"
               ],
               "properties": {
                 "name": {
@@ -70,266 +90,6 @@
             "description": "Created"
           }
         }
-      }
-    },
-    "/v1/posts": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      },
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/posts/new": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/posts/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/posts/{id}/edit": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/{postId}/comments": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      },
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/{postId}/comments/new": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/{postId}/comments/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/v1/{postId}/comments/{id}/edit": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
       }
     }
   }
