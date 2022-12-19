@@ -1,21 +1,33 @@
 const createError = require('http-errors')
 const { Post } = require('../models')
 
+function convertPost(post) {
+    post.user = {
+      _id: post.user._id,
+      name: post.user.name,
+      user: post.user.user
+    };
+
+    return post;
+}
+
+exports.convertPost = convertPost;
+
 exports.list = (req, res, next) => Promise.resolve()
-  .then(() => Post.find({}))
-  .then((data) => res.json(data))
+  .then(() => Post.find({}).populate('user').populate('likes').populate('comments'))
+  .then(data => data.map(convertPost))
+  .then(data => res.json(data))
   .catch(err => next(err))
 
 exports.add = (req, res, next) => Promise.resolve()
   .then(() => {
-    new Post(req.body).save()
+    req.body.user = req.user._id;
+    return new Post(req.body).save()
   })
-  .then((data) => {
-    res.message('add post success!')
-    //res.redirect(`/v1/posts/${data._id}`)
-    res.redirect(`/v1/posts`)
-  })
+  .then((post) => post.populate('user').populate('likes'))
+  .then((data) => res.json(convertPost(data)))
   .catch(err => {
+    console.log("Erro ao criar post!")
     console.log(err)
     next(err)})
 

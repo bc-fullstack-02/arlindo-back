@@ -126,13 +126,14 @@ app.use(helmet)
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization
   const token = authHeader && authHeader.split(' ')[1]
+
   if (token == null) return next(createError(401))
 
-  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-    UserModel.findOne({user})
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decodedToken) => {    
+    UserModel.findOne({user: decodedToken.user})
     .then(u => {
-      req.user = u
-      next()
+      req.user = u;
+      next();
     })
     .catch(error => next(error))
   }) 

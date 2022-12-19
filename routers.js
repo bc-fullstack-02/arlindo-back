@@ -2,8 +2,11 @@ const express = require('express')
 
 const {
   PostController,
-  CommentController
+  CommentController,
+  LikeController,
 } = require('./controllers')
+
+const { getAll } = require('./controllers/user-controller');
 
 const router = express.Router()
 
@@ -23,26 +26,32 @@ router
   .route('/posts/:id/edit')
   .get(PostController.edit)
 
-const nRouter = express.Router()
-
-nRouter
+router
   .param('postId', CommentController.beforeAllById)
   .route('/:postId/comments')
   .get(CommentController.list)
   .post(CommentController.add)
-nRouter
+router
   .route('/:postId/comments/new')
   .get(CommentController.new)
-nRouter
+router
   .route('/:postId/comments/:id')
   .get(CommentController.show)
   .put(CommentController.save)
   .delete(CommentController.delete)
-nRouter
+router
   .route('/:postId/comments/:id/edit')
   .get(CommentController.edit)
 
+router
+  .param('postId', LikeController.beforeAllById)
+  .route('/:postId/likes')
+  .post(LikeController.add)
 
-router.use('/posts', nRouter)
+router
+  .route('/all/users')
+  .get(getAll)
+
+router.use('/posts', router)
 
 module.exports = router

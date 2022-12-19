@@ -13,6 +13,7 @@ exports.Post = require('./post.js')
 exports.Comment = require('./comment.js')
 exports.Redact = require('./redact.js')
 exports.User = require('./user.js')
+exports.Like = require('./like.js')
 
 mongoose.connection.on('error', () => {
   console.error('Mongo not connected')

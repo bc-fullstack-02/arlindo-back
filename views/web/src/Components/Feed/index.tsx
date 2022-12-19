@@ -1,39 +1,36 @@
-import { useState, useEffect } from 'react';
-import api from "../../services/api";
-import { UserCircle, Chat, Heart } from 'phosphor-react'
+import { useEffect, useState } from 'react';
+import api from '../../services/api';
+import { getAuthHeader } from '../../services/auth';
+import { UserCircle, Chat, Heart, IconWeight } from 'phosphor-react'
 import Heading from "../Heading";
 import Text from "../Text";
 
-interface Post {
-    _id: string;
-    title: string;
-    description: string;
-    profile: {
-        name: string;
-    };
-    comments: [];
-    likes: [];
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { Post } from '../../models/Post';
+import { UserInfo } from '../../models/UserInfo';
+
+export interface FeedProps {
+    posts: Post[];
+    handleLike: (post: Post) => void;
+    loggedUser: UserInfo;
 }
 
-function Feed() {
-    const token = localStorage.getItem("accessToken");
-    const user = localStorage.getItem("user");
-    const [posts, setPosts] = useState<Post[]>([]);
+function Feed({ posts, handleLike, loggedUser }: FeedProps) {
+    function getColor(post: Post) {       
+        const userHaveLike = post.likes.find(like => like.user == loggedUser._id);
 
-    useEffect(() => {
-        async function getPosts() {
-            const response = await api.get("/feed", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setPosts(response.data);
-        }
+        return userHaveLike != null 
+            ? "red" 
+            : "white";
+    }
 
-        getPosts();
-    }, []);
+    function getWeight(post: Post) : IconWeight {       
+        const userHaveLike = post.likes.find(like => like.user == loggedUser._id);
 
-    console.log(posts);
+        return userHaveLike != null 
+            ? "fill" 
+            : "regular";
+    }
 
     return (
     <div>
@@ -41,10 +38,6 @@ function Feed() {
             <Text size="lg" className="font-extrabold ml-5">
                 Página Inicial
             </Text>
-            <div className="flex flex-row items-center ml-5 my-4">
-                <UserCircle size={48} weight="light" className='text-slate-50'></UserCircle>
-                <Text className="font-extrabold ml-2"></Text>
-            </div>
         </Heading>
 
         <section>
@@ -53,9 +46,9 @@ function Feed() {
                  <div className="border-b border-slate-400" key={post._id}>
                  <div className="flex flex-row items-center ml-5 my-4">
                      <UserCircle size={48} weight="light" className='text-slate-50'></UserCircle>
-                     <Text className="font-extrabold ml-2">Fulano de Tal</Text>
+                     <Text className="font-extrabold ml-2">{post.user?.name}</Text>
                  </div>
-                 <div className='ml-16' flex flex-col gap-2 >
+                 <div className='ml-16 flex flex-col gap-2' >
                  <Heading size="sm">{post.title}</Heading>
                  <Text>
                      <p>{post.description}</p> 
@@ -65,8 +58,8 @@ function Feed() {
                     <Chat size={24} className='text-slate-50' />
                     <Text size="sm">{post.comments.length}</Text>
  
-                    <div className='hover:bg-sky-400 rounded-full p-1'>
-                        <Heart size={24} className='text-slate-50' />
+                    <div className='cursor-pointer hover:bg-sky-400 rounded-full p-1' onClick={() => handleLike(post)}>
+                        <Heart size={24} color={getColor(post)} weight={getWeight(post)} className='text-slate-50' />
                     </div>
                     <Text size="sm">{post.likes.length}</Text>
                  </div>

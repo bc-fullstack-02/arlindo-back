@@ -7,7 +7,7 @@ function SignUp() {
 
     async function handleRegister(auth: Auth) {
         try {
-            await api.post("/security/register", auth);
+            await api.post("/users", auth);
           navigate("/");     
         } catch (err){
           alert("Erro na criação do usuário.")  

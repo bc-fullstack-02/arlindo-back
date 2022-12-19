@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import api from '../../services/api';
 import { FormEvent } from "react";
-import { TextInput } from "../TextInput";
 import Button from '../../Components/Button';
+import { TextInput } from '../../Components/TextInput';
+import { Post } from '../../models/Post';
+import Dropzone from '../Dropzone';
 
 interface CreatePostDialogProps {
-    closeDialog: () => void;
+    closeDialog: (newPost: Post) => void;
 }
 
 interface PostFormElements extends HTMLFormControlsCollection {
@@ -17,31 +20,32 @@ interface PostFormElements extends HTMLFormElement {
     readonly elements: PostFormElements;
 }
 
-function CreatePostDialog ({closeDialog}: CreatePostDialogProps) {
+function CreatePostDialog ({ closeDialog }: CreatePostDialogProps) {
     const token = localStorage.getItem("accessToken");
-   
+    const [selectedFile, setSelectedFile] = useState<File>();
+
     async function handleSubmit(event: FormEvent<PostFormElements>) {
        event.preventDefault();
        const form = event.currentTarget;
 
-       //feito - TO-DO title: form.elements.title.value (Precisa criar um input na tela de Titulo para pega esse valor)
        const newPost = {
-        title: "Titulo do Post",
-        description: form.elements.description.value,
+            title: form.elements.title.value,
+            description: form.elements.description.value,
        }
        
        try {
-         await api.post("/posts", newPost, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        closeDialog();
+            const response = await api.post("/posts", newPost, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        
+            closeDialog(response.data);
+
        } catch (err) {
         console.error(err);
         alert("Erro ao criar o Post");
        }
-       console.log();
     }
 
     return (
@@ -66,6 +70,7 @@ function CreatePostDialog ({closeDialog}: CreatePostDialogProps) {
                             id="description"
                             placeholder="Diga o que está pensando..."
                         />
+                        <Dropzone onFileUploded={setSelectedFile} />
                     </div>
 
                     <footer className='mt-6 flex justify-end gap-4 '>

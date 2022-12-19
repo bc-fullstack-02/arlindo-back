@@ -13,11 +13,14 @@ function Login() {
     async function handleLogin(auth: Auth) {
         try { 
             const { data } = await api.post("/login", auth);
+
             //TO-DO Tem que corrigir o retorno do token pois so retona do backend um string ao inves de ser o objeto UserToken!!! 
-            // const decodedToken = jwt_decode(data.data.accessToken) as UserToken;            
+            const decodedToken = jwt_decode(data.accessToken) as UserToken;            
+
             // localStorage.setItem ("profile", decodedToken.profile);
-            // localStorage.setItem ("user", decodedToken.user);
-            // localStorage.setItem ("accessToken", data.data.accessToken); 
+            localStorage.setItem("user", decodedToken.user);
+            localStorage.setItem("accessToken", data.accessToken); 
+            localStorage.setItem("userInfo", JSON.stringify(data.user))
            
             //const decodedToken = parseJwt(data.data.accessToken) as UserToken;
 
