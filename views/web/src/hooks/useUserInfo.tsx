@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { UserInfo } from "../models/UserInfo";
 
-export function useUserInfo() {
+type UpdateUserFunction = (userInfo: Partial<UserInfo>) => void;
+
+export function useUserInfo(): [ UserInfo, UpdateUserFunction ] {
     const [user, setUser] = useState<UserInfo>({} as UserInfo);
 
     function loadUser() {
@@ -17,9 +19,15 @@ export function useUserInfo() {
         setUser(userJSON);
     }
 
+    function updateUser(userInfo: Partial<UserInfo>) {
+        Object.assign(user, userInfo)
+        localStorage.setItem("userInfo", JSON.stringify(user))
+        setUser(user);
+    }
+
     useEffect(() => {
         loadUser();
     }, []);
 
-    return user;
+    return [user, updateUser];
 }

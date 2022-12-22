@@ -5,7 +5,7 @@ import { FormEvent } from "react";
 import Button from '../../Components/Button';
 import { TextInput } from '../../Components/TextInput';
 import { Post } from '../../models/Post';
-import Dropzone from '../Dropzone';
+import Dropzone from '../Dropzone/inde';
 
 interface CreatePostDialogProps {
     closeDialog: (newPost: Post) => void;
@@ -20,6 +20,13 @@ interface PostFormElements extends HTMLFormElement {
     readonly elements: PostFormElements;
 }
 
+const toBase64 = (file: Blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
+
 function CreatePostDialog ({ closeDialog }: CreatePostDialogProps) {
     const token = localStorage.getItem("accessToken");
     const [selectedFile, setSelectedFile] = useState<File>();
@@ -31,6 +38,7 @@ function CreatePostDialog ({ closeDialog }: CreatePostDialogProps) {
        const newPost = {
             title: form.elements.title.value,
             description: form.elements.description.value,
+            img: await toBase64(form.elements.img.files[0])
        }
        
        try {

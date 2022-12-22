@@ -6,7 +6,7 @@ const {
   LikeController,
 } = require('./controllers')
 
-const { getAll } = require('./controllers/user-controller');
+const { getAll, follow } = require('./controllers/user-controller');
 
 const router = express.Router()
 
@@ -51,6 +51,14 @@ router
 router
   .route('/all/users')
   .get(getAll)
+
+router
+  .param('followId', (req, res, next, id) => {
+    res.locals.followId = id,
+    next();
+  })
+  .route('/:followId/follow')
+  .post(follow)
 
 router.use('/posts', router)
 

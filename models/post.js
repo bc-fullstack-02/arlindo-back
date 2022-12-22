@@ -15,7 +15,11 @@ const postSchema = new Schema({
         .count({ term: val })
         .then(count => count === 0),
       message: 'nao pode usar a palavra {VALUE}'
-    }
+    },
+  },
+  img: {
+    type: Schema.Types.String,
+    ref: 'Image'
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -32,4 +36,4 @@ const postSchema = new Schema({
   }]
 })
 
-module.exports = model('Post', postSchema)
+module.exports = model('Post', postSchema)

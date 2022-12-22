@@ -10,13 +10,13 @@ interface DropzoneProps {
 function Dropzone({onFileIploaded}: DropzoneProps) {
     const [selectedFileUrl, setSelectedFileUrl] = useState("");
 
-    const onDrop = useCallback(acceptedFiles: any[] => {
+    const onDrop = useCallback((acceptedFiles: any[]) => {
         const files = acceptedFiles[0];
 
-        const fileUrl = URL.createObjectURL(file);
+        const fileUrl = URL.createObjectURL(files);
         
         setSelectedFileUrl(fileUrl);
-        onFileIploaded(file);
+        onFileIploaded(files);
     }, 
     [onFileIploaded]
     );
@@ -25,10 +25,10 @@ function Dropzone({onFileIploaded}: DropzoneProps) {
 
     return (
         <div className='flex flex-col' {...getRootProps()}>
-            <input {...getInputProps()} />
+            <input id="img" {...getInputProps()} />
 
          {selectedFileUrl ? (
-            <img src={selectedFiledUrl} alt="foto" />
+            <img src={selectedFileUrl} alt="foto" />
          ): (
             <p>
                <Image size={32} weight="thin" />
@@ -39,4 +39,4 @@ function Dropzone({onFileIploaded}: DropzoneProps) {
       );  
 };
 
-export default Dropzone;
+export default Dropzone;

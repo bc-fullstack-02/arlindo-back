@@ -1,5 +1,7 @@
 const createError = require('http-errors')
-const { Post } = require('../models')
+const { Post } = require('../models');
+const post = require('../models/post');
+let data;
 
 function convertPost(post) {
     post.user = {
@@ -17,15 +19,22 @@ exports.list = (req, res, next) => Promise.resolve()
   .then(() => Post.find({}).populate('user').populate('likes').populate('comments'))
   .then(data => data.map(convertPost))
   .then(data => res.json(data))
-  .catch(err => next(err))
+  .catch(err => {
+    console.error(err)
+    next(err)
+  })
 
 exports.add = (req, res, next) => Promise.resolve()
   .then(() => {
     req.body.user = req.user._id;
     return new Post(req.body).save()
   })
-  .then((post) => post.populate('user').populate('likes'))
-  .then((data) => res.json(convertPost(data)))
+  .then((returnPost) => {
+    returnPost.populate('user');
+    returnPost.populate('likes');
+    data = returnPost;
+  })
+  .then(() => res.json(convertPost(data)))
   .catch(err => {
     console.log("Erro ao criar post!")
     console.log(err)
@@ -44,7 +53,7 @@ exports.show = (req, res, next) => Promise.resolve()
       next(createError(404))
     }
   })
-  .catch(err => next(err))
+  .catch(err => { next(err)})
 
 exports.save = (req, res, next) => Promise.resolve()
   .then(() => Post.findByIdAndUpdate(req.params.id, req.body.post, {
@@ -79,4 +88,4 @@ exports.new = (req, res, next) => Promise.resolve()
   .then((data) => {
     res.render('posts/new', { post: new Post(res.locals.post) })
   })
-  .catch(err => next(err))
+  .catch(err => next(err))

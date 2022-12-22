@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import { getAuthHeader } from '../../services/auth';
 import { UserCircle, Chat, Heart, IconWeight } from 'phosphor-react'
 import Heading from "../Heading";
 import Text from "../Text";
-
-import { useUserInfo } from '../../hooks/useUserInfo';
 import { Post } from '../../models/Post';
 import { UserInfo } from '../../models/UserInfo';
 
@@ -53,6 +48,9 @@ function Feed({ posts, handleLike, loggedUser }: FeedProps) {
                  <Text>
                      <p>{post.description}</p> 
                  </Text>
+                 <div>
+                    <img src={post.img} />                
+                 </div>
                  </div>
                  <div className="flex items-center ml-16 my-14 space-x-2">
                     <Chat size={24} className='text-slate-50' />
@@ -70,4 +68,4 @@ function Feed({ posts, handleLike, loggedUser }: FeedProps) {
   );  
 }
 
-export default Feed;
+export default Feed;

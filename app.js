@@ -127,12 +127,18 @@ function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization
   const token = authHeader && authHeader.split(' ')[1]
 
-  if (token == null) return next(createError(401))
+  if (token == null) return next(createError(401));
+
+  console.log("Token: ", token);
 
   jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decodedToken) => {    
+    console.log("Decoded token: ", decodedToken);
+
     UserModel.findOne({user: decodedToken.user})
     .then(u => {
-      req.user = u;
+      console.log("User request: ", u.user);
+      
+      req.user = u;      
       next();
     })
     .catch(error => next(error))

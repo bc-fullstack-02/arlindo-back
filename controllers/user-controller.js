@@ -44,17 +44,17 @@ exports.create = (req, res, next) => {
   .catch(err => next(err))
 }
 
+function transformUser(user) {
+  return  {
+    _id: user._id,
+    user: user.user,
+    name: user.name,
+    following: user.following
+ }
+}
+
 exports.getAll = (req, res, next) => {
   console.log('GET ALL CALLED');
-
-  const transformUser = (user) => {
-   return  {
-      _id: user._id,
-      user: user.user,
-      name: user.name,
-      following: user.following
-   }
-  }
 
   Promise.resolve()
     .then(() => User.find({}))
@@ -109,7 +109,7 @@ exports.login = (req, res, next) => {
       _id: user._id,
       user: user.user,
       name: user.name,
-      following: user.following
+      following: getUsersFollowing(user)
     };
 
     res.status(200).json({ 
@@ -121,4 +121,46 @@ exports.login = (req, res, next) => {
  Promise.resolve()
   .then(loginResolve)
   .catch(err => next(err))
+}
+
+exports.follow = (req, res, next) => {
+  const followResolve = async () => {
+    const loggedUser = req.user;
+    const followId = res.locals.followId;
+
+    const userFollowParam = await User.findById(followId);
+
+    if(!userFollowParam) {
+      return next(createError(404));
+    }
+
+    const followingListExists = loggedUser.following.map(userFollow => userFollow.toString());
+
+    const loggedUserAlreadyFollow = followingListExists.includes(followId);
+
+    const followingList = loggedUserAlreadyFollow 
+      ? followingListExists.filter(userFollowingId => userFollowingId != followId)
+      : [ ...followingListExists, followId ];
+
+    loggedUser.following = followingList;
+    
+    await loggedUser.save();
+    await loggedUser.populate('following');
+
+    res.status(200).json({
+      following: getUsersFollowing(loggedUser)
+    });
+  }
+
+  Promise.resolve()
+    .then(followResolve)
+    .catch(err => next(err));
+}
+
+function getUsersFollowing(mainUser) {
+  return mainUser.following.map(user  => ({
+    _id: user._id,
+    user: user.user,
+    name: user.name,
+ }))
 }

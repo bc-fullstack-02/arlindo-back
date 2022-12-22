@@ -4,6 +4,7 @@ export interface Post {
     _id: string;
     title: string;
     description: string;
+    img: string;
     profile: {
         name: string;
     };
@@ -17,5 +18,5 @@ export interface Like {
     user: string;
     post: string;
     updatedAt: Date;
-    createdAt: Date;
+    createdAt: Date;
 }

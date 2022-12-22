@@ -16,10 +16,13 @@ import api from '../../services/api';
 import { Friends } from '../../Components/Friends';
 import { Profile } from '../../Components/Profile';
 import { UserInfo } from '../../models/UserInfo';
+import { useNavigate } from 'react-router-dom';
 
 function Home () {
-    const user = useUserInfo();
+    const [user, updateUser] = useUserInfo();
     const token = localStorage.getItem("accessToken");
+
+    const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
     const [posts, setPosts] = useState<Post[]>([]);
@@ -47,6 +50,8 @@ function Home () {
     }
 
     useEffect(() => {
+        if(user == null && token == null) navigate("/")
+
         getPosts();
         getFriends();
     }, []);
@@ -66,6 +71,19 @@ function Home () {
         setPosts(postsModified);
     }
 
+    async function handleFollow(user: UserInfo) {
+        const response = await api.post(`/${user._id}/follow`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const { following } = response.data;
+        
+        updateUser({ following });
+        setFriends((prev) => [ ...prev ]);
+    }
+
     function closeDialog(newPost: Post) {
         setOpen(false);
         setPosts((posts) => [newPost, ...posts]);
@@ -82,7 +100,7 @@ function Home () {
             case 'feed':
                 return <Feed loggedUser={user} posts={posts} handleLike={handleLike} />;
             case 'friends':
-                return <Friends loggedUser={user} friends={friends} />;
+                return <Friends loggedUser={user} friends={friends} handleFollow={handleFollow} />;
             case 'profile':
                 return <Profile />;
         }
